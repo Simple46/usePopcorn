@@ -1,20 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
-import { useMovie } from "./useMovie";
-import { useLocalStorageState } from "./useLocalStorageState";
-
-const KEY = "23d57b7a";
 
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
+const KEY = "23d57b7a";
 
 export default function App() {
-  const [query, setQuery] = useState("")
+  const [query, setQuery] = useState("");
+  const [movies, setMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const [selectedId, setSelectedId] = useState(null);
 
   // const [watched, setWatched] = useState([]);
-
+  const [watched, setWatched] = useState(function () {
+    const storedValue = localStorage.getItem("watched");
+    return JSON.parse(storedValue);
+  });
 
   // const temQuery = "spiderman";
 
@@ -35,10 +38,55 @@ export default function App() {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
 
+  useEffect(
+    function () {
+      localStorage.setItem("watched", JSON.stringify(watched));
+    },
+    [watched],
+  );
 
+  
 
-  const {movies, isLoading, error } = useMovie(query)
-  const { watched, setWatched } = useLocalStorageState()
+  useEffect(
+    function () {
+      setIsLoading(true);
+      setError("");
+      const controller = new AbortController();
+
+      async function fetchMovies() {
+        try {
+          const res = await fetch(
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+            { signal: controller.signal },
+          );
+
+          if (!res.ok)
+            throw new Error("Something went wrong with fetching movies");
+
+          const data = await res.json();
+          if (data.Response === "False") throw new Error("Movie not found");
+          setMovies(data.Search);
+        } catch (err) {
+          if (err.name !== "AbortError") {
+            setError(err.message);
+          }
+        } finally {
+          setIsLoading(false);
+        }
+        if (query.length < 3) {
+          setMovies([]);
+          setError("");
+        }
+      }
+      handleCloseMovie();
+      fetchMovies();
+
+      return function () {
+        controller.abort();
+      };
+    },
+    [query],
+  );
 
   return (
     <>
@@ -95,6 +143,30 @@ function Main({ children }) {
   return <main className="main">{children}</main>;
 }
 
+/*
+function WatchedBox() {
+    const [watched, setWatched] = useState(tempWatchedData);
+    const [isOpen2, setIsOpen2] = useState(true);
+
+  return (
+    <div className="box">
+      <button
+        className="btn-toggle"
+        onClick={() => setIsOpen2((open) => !open)}
+      >
+        {isOpen2 ? "–" : "+"}
+      </button>
+      {isOpen2 && (
+        <>
+          <WatchedSummary watched={watched } />
+        <WatchedMovieList watched={watched}/>
+         
+        </>
+      )}
+    </div>
+  );
+}
+*/
 
 function Box({ children }) {
   const [isOpen, setIsOpen] = useState(true);
@@ -125,7 +197,7 @@ function WatchedMovieList({ watched, onDeleteWatch }) {
 
 function WatchedMovie({ movie, onDeleteWatch }) {
   return (
-    <li onClick={(e) => e.stopPropagation()} className="movie-list">
+    <li>
       <img src={movie.Poster} alt={`${movie.Title} poster`} />
       <h3>{movie.Title}</h3>
       <div>
@@ -379,7 +451,7 @@ function Logo() {
 function Numresults() {
   return (
     <p className="num-results">
-      Found <strong>{10}</strong> results
+      Found <strong>X</strong> results
     </p>
   );
 }
