@@ -13,10 +13,7 @@ export default function App() {
   const [query, setQuery] = useState("")
   const [selectedId, setSelectedId] = useState(null);
 
-  // const [watched, setWatched] = useState([]);
 
-
-  // const temQuery = "spiderman";
 
   const handleSelectMovie = function (id) {
     setSelectedId(() => (selectedId === id ? null : id));
