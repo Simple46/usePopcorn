@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
 // import StarRating from './StarRating';
 // import Challenge from './Challenge';
 // import Challenge2 from './Challenge2';
@@ -15,7 +15,7 @@ import App from './App'
 //   </div>
 // }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <React.StrictMode>
   //   {/* <StarRating maxRating={5} messages={['Terrible', 'Bad', 'Okay', 'Good', 'Amazing']} onSe />
@@ -24,8 +24,6 @@ root.render(
   //   <Challenge/>
 
   // </React.StrictMode>
-  <App />
+  <App />,
   // <Challenge2/>
 );
-
-
