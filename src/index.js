@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App'
-import StarRating from './StarRating';
-import Challenge from './Challenge';
-import Challenge2 from './Challenge2';
+// import StarRating from './StarRating';
+// import Challenge from './Challenge';
+// import Challenge2 from './Challenge2';
 // import Challenge from './Challenge';
 
 // function Test() {

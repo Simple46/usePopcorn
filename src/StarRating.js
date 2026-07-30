@@ -113,12 +113,4 @@ function Star({ onRate, full, onHoverIn, onHoverOut, color, size }) {
   );
 }
 
-{
-  /*
-  
 
-
-EMPTY STAR
-
- */
-}
